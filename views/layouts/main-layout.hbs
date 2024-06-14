@@ -1,0 +1,41 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    {{#if productCSS}}<link rel="stylesheet" href="/css/shop.css">{{/if}}
+    {{#if addProductCSS}}<link rel="stylesheet" href="/css/add-product.css">{{/if}}
+    {{#if isProductDetailPage}}<link rel="stylesheet" href="/css/product-details.css">{{/if}}
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="main__navbar">
+          <li {{#if isIndexPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/">Shop</a>
+          </li>
+          <li
+          {{#if isProductPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/products">Products</a>
+          </li>
+          <li {{#if isCartPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/cart">Cart</a>
+          </li>
+          <li {{#if isOrdersPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/orders">Orders</a>
+          </li>
+          <li {{#if isAddProductPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/admin/add-product">Add Product</a>
+          </li>
+          <li {{#if isAdminProductListPage}}class="main__navbar-item--active"{{else}}class="main__navbar-item"{{/if}}>
+            <a href="/admin/products">Admin Products</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+        {{{body}}}
+    </main>
+  </body>
+</html>

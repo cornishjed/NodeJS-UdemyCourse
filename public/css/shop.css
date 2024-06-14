@@ -1,0 +1,62 @@
+.cardgrid {
+    display: flex;
+    width: 63vw;
+    margin: 1rem 0;
+    gap: 2rem;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    flex-basis: 15rem;
+    padding: 1rem;
+}
+
+.card__header {
+    margin: 0;
+    text-align: center;
+}
+
+.card__image {
+    min-height: 8rem;
+}
+
+.card__description {
+
+}
+
+.card__button {
+    width: 42%;
+    margin-bottom: 1rem;
+    padding: 7px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    color: #000000;
+    background-color: #ccc;
+
+    &:hover {
+        background: lighten(#ccc, 20%);
+    }
+}
+
+.card__admin-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    & > form > .card__button {
+        width: 4rem;
+    }
+}
+
+.card__admin-controls > form > input {
+    display: none;
+}

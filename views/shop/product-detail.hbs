@@ -1,0 +1,8 @@
+<div class="product-details">
+  <h1 class="product-details__title">{{product.title}}</h1>
+  <hr>
+  <img class="product-details__image" src="{{product.imageUrl}}" />
+  <h2 class="product-details__price">£{{product.price}}</h2>
+  <p class="product-details__description">{{product.description}}</p>
+  {{> add-to-cart product}}
+</div>
