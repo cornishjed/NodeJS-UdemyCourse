@@ -1,0 +1,22 @@
+.addproduct__form {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 25%;
+    max-width: 480px;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.addproduct__form-entry {
+    display: flex;
+    flex-direction: column;
+}
+
+.addproduct__form-submit {
+    width: fit-content;
+    align-self: flex-start;
+}
+
+.addproduct__id {
+    display: none;
+}
