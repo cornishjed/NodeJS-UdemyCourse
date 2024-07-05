@@ -7,7 +7,7 @@ exports.getProducts = (req, res, next) => {
         isAdminProductListPage: true,
         productCSS: true,
         title: "Admin Products",
-        productsExist: products.length > 0,
+        //productsExist: products.length > 0,
         products: products,
       });
     });
@@ -25,7 +25,7 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.getEditProduct = (req, res, next) => {
-  const id = req.query.id;
+  const id = req.query._id;
 
   Product.fetchOne(id, (product) => {
     res.render("admin/add-product", {
@@ -44,13 +44,15 @@ exports.postAddProduct = (req, res, next) => {
   res.redirect("/admin/products");
 };
 
-exports.postEditProduct = (req, res, next) => {
-  const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description, req.body.id);
+exports.postEditProduct = (req, res, next) => { // to do
+  console.log(req.body._id)
+  const product = new Product(req.body.title, req.body.imageUrl, req.body.price, req.body.description, req.body._id);
   product.edit();
   res.redirect("/admin/products");
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  Product.delete(req.body.id);
+  console.log(req.body._id);
+  Product.delete(req.body._id);
   res.redirect("/admin/products");
 };

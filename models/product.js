@@ -1,27 +1,28 @@
-const fs = require("fs");
-const path = require("path");
-const { randomUUID } = require("crypto");
+const mongodb = require("mongodb");
 
-const productDataPath = path.join(path.dirname(require.main.filename), "data", "products.json");
+const getDb = require("../utils/database").getDb;
 
-const getFileData = (cb) => {
-  let products = [];
+let productsArr;
 
-  fs.readFile(productDataPath, (err, data) => {
-    if (!err) {
-      try {
-        products = JSON.parse(data);
-      } catch (err) {
-        console.log("No data/data error");
-      }
-    }
-    cb(products);
-  });
+const getCollection = (name) => {
+  const db = getDb();
+  return db.collection(name);
+}
+
+const getCollectionData = async (cb) => {
+  try {
+    const products = getCollection("products");
+    const cursor = await products.find();
+
+    productsArr = await cursor.toArray();
+  } finally {
+    cb(productsArr);
+  }
 };
 
 module.exports = class Product {
-  constructor(title, imageUrl, price, description, id) {
-    this.id = id;
+  constructor(title, imageUrl, price, description, _id = new mongodb.ObjectId()) {
+    this._id = _id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.price = price;
@@ -29,63 +30,89 @@ module.exports = class Product {
   }
 
   save = () => {
-    this.id = randomUUID();
-    getFileData((products) => {
-      products.push(this);
-      fs.writeFile(productDataPath, JSON.stringify(products), (err) => {
-        if (err) console.log(err);
-        else console.log("File appended.");
+    const products = getCollection("products");
+
+    return products
+      .insertOne(this)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    });
   };
 
   edit = () => {
-    getFileData((products) => {
-      products.forEach((product) => {
-        if (product.id === this.id) {
-          console.log("match found");
-          product.title = this.title;
-          product.imageUrl = this.imageUrl;
-          product.price = this.price;
-          product.description = this.description;
-          fs.writeFile(productDataPath, JSON.stringify(products), (err) => {
-            if (err) console.log(err);
-            else console.log("File edited.");
-          });
-        }
-      });
-    });
+    const products = getCollection("products");
+    const filter = {
+      _id: new mongodb.ObjectId(this._id),
+    };
+    const updateProduct = {
+      $set: {
+        title: this.title,
+        imageUrl: this.imageUrl,
+        price: this.price,
+        description: this.description
+      }
+    }
+
+    return products
+      .updateOne(filter, updateProduct)
+      .then(result => {
+        console.log(
+          `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      })
   };
 
-  static delete = (id) => {
-    getFileData((products) => {
-      let i = 0;
-      products.forEach((product) => {
-        if (product.id === id) {
-          products.splice(i, 1);
-          fs.writeFile(productDataPath, JSON.stringify(products), (err) => {
-            if (err) console.log(err);
-            else console.log("Entry deleted.");
-          });
-        }
-        i++;
+  static delete = (_id) => {
+    const products = getCollection("products");
+    const options = {
+      _id: new mongodb.ObjectId(_id),
+    };
+
+    return products
+      .deleteOne(options)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(err => {
+        console.log(err);
       });
-    });
   };
 
   static fetchAll = (cb) => {
-    getFileData((products) => {
-      cb(products); // cb is a function that will receive given arguments
+    getCollectionData((data) => {
+      cb(data); // cb is a function that will receive given arguments
     });
   };
 
-  static fetchOne = (id, cb) => {
-    getFileData((products) => {
+  static fetchOne = async (_id, cb) => {
+    const products = getCollection("products");
+    const query = {
+      _id: new mongodb.ObjectId(_id),
+    };
+    
+    return products
+      .findOne(query)
+      .then(result => {
+        cb(result);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
+    //
+    getCollectionData((products) => {
+      console.log(products)
       products.forEach((product) => {
-        if (product.id === id) {
+        if (product._id === _id) {
           cb(product);
         }
       });
-    })
-  }
+    });
+  };
 };

@@ -1,5 +1,5 @@
 <form class="addproduct__form" {{#if isAddProductPage}}action="/admin/add-product"{{else}}action="/admin/edit-product"{{/if}} method="POST">
-  <input class="addproduct__id" type="text" name="id" {{#if productExist}}value="{{product.id}}"{{/if}}/>
+  <input class="addproduct__id" type="text" name="_id" {{#if productExist}}value="{{product._id}}"{{/if}}/>
   <div class="addproduct__form-entry">
     <label for="title">Title</label>
     <input class="addproduct__title" type="text" name="title" {{#if productExist}}value="{{product.title}}"{{/if}}/>
