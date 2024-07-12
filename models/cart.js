@@ -1,9 +1,92 @@
-const fs = require("fs");
-const path = require("path");
+const mongodb = require("mongodb");
 
-const cartDataPath = path.join(path.dirname(require.main.filename), "data", "cart.json");
+const getDb = require("../utils/database").getDb;
+
+const Product = require("./product");
+
+let cartArr = [];
+const cartProducts = [];
+
+const getCollection = (name) => {
+  const db = getDb();
+  return db.collection(name);
+};
+
+const getCollectionData = async (cb) => {
+  try {
+    const cart = getCollection("cart");
+    const cursor = await cart.find();
+
+    cartArr = await cursor.toArray();
+  } finally {
+    cb(cartArr);
+  }
+};
+
+const fetchAll = async (cb) => {
+  getCollectionData((data) => {
+    cb(data);
+  });
+};
 
 module.exports = class Cart {
+  static addToCart = async (details) => {
+    try {
+      const cart = getCollection("cart");
+      const query = { _id: new mongodb.ObjectId(details._id) };
+
+      const dbEntry = await cart.findOne(query);
+
+      if (!dbEntry) {
+        const newEntry = {
+          _id: new mongodb.ObjectId(details._id),
+          qty: 1,
+          total: +details.price,
+        };
+
+        return cart.insertOne(newEntry);
+      }
+
+      if (dbEntry) {
+        const filter = { _id: new mongodb.ObjectId(details._id) };
+
+        return cart.updateOne(filter, {
+          $set: {
+            qty: dbEntry.qty + 1,
+            total: +dbEntry.total + +details.price,
+          },
+        });
+      }
+
+      console.log(details);
+
+      /* return cart
+      .updateOne(filter, {
+        _id: new mongodb.ObjectId(details.id)
+      }) */
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  static getCartProductData = async (cb) => {
+    await fetchAll((cart) => {
+      if (cart.length > cartProducts.length) {
+        cart.forEach((item) => {
+          Product.fetchOne(item._id, (product) => {
+            cartProducts.push({ name: product.title, qty: item.qty });
+            //console.log(cartProducts);
+          });
+        });
+      }
+
+      cb([...cartProducts]);
+      //cartProducts.length = 0;
+    });
+  };
+};
+
+/* module.exports = class Cart {
   static addToCart = (product) => {
     Cart.fetch((cart) => {
       if (cart === false) {
@@ -69,4 +152,4 @@ module.exports = class Cart {
       console.log("Cart Updated");
     });
   };
-};
+}; */

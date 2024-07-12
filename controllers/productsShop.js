@@ -1,17 +1,24 @@
 const Product = require("../models/product");
 const Cart = require("../models/cart");
 
-exports.getCart = (req, res, next) => {
+exports.getCart = async (req, res, next) => {
   // adds method to the exports object
-  res.render("shop/cart", {
-    title: "Cart",
-    isCartPage: true,
+  
+
+  await Cart.getCartProductData((cart) => {
+    console.log(cart)
+    res.render("shop/cart", {
+      title: "Cart",
+      isCartPage: true,
+      cartExists: cart.length > 0,
+      cartItems: cart,
+    });
   });
 };
 
 exports.postCart = (req, res, next) => {
   const productCartDetails = {
-    id: req.body.productId,
+    _id: req.body._id,
     price: req.body.productPrice,
   };
 

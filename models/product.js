@@ -96,7 +96,7 @@ module.exports = class Product {
       _id: new mongodb.ObjectId(_id),
     };
     
-    return products
+    return await products
       .findOne(query)
       .then(result => {
         cb(result);

@@ -1,1 +1,11 @@
 <h1>Cart</h1>
+
+<div>
+    <ul>
+        {{#if cartExists}}
+            {{#each cartItems}}
+                <li>{{this.title}}</li>
+            {{/each}}
+        {{/if}}
+    </ul>
+</div>
