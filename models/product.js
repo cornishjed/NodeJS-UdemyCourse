@@ -104,15 +104,5 @@ module.exports = class Product {
       .catch(err => {
         console.log(err);
       })
-
-    //
-    getCollectionData((products) => {
-      console.log(products)
-      products.forEach((product) => {
-        if (product._id === _id) {
-          cb(product);
-        }
-      });
-    });
   };
 };
