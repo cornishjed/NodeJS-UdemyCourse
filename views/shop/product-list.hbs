@@ -6,15 +6,15 @@
             <img class="card__image" src="{{this.imageUrl}}" alt="" />
             <h2 class="card__price">£{{this.price}}</h2>
             <p class="card__description">{{this.description}}</p>
-            <a class="card__button" href="/product-detail/{{this.id}}">Details</a>
+            <a class="card__button" href="/product-detail/{{this._id}}">Details</a>
                 {{#if ../isAdminProductListPage}}
                     <div class="card__admin-controls">
                         <form action="edit-product" method="GET">
-                            <input name="id" value="{{this.id}}" />
+                            <input name="_id" value="{{this._id}}" />
                             <button class="card__button" type="submit">Edit</button>
                         </form>
                         <form action="delete-product" method="POST">
-                            <input name="id" value="{{this.id}}" />
+                            <input name="_id" value="{{this._id}}" />
                             <button class="card__button" type="submit">Delete</button>
                         </form>      
                     </div>

@@ -2,7 +2,7 @@ const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const bodyParser = require("body-parser");
 
-const mongoConnect = require('./utils/database');
+const mongoConnect = require('./utils/database').mongoConnect;
 
 const app = express();
 const adminRoutes = require("./routes/admin");
@@ -23,7 +23,10 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(pageNotFound);
 
-mongoConnect(client => {
-    console.log(client);
-    app.listen(5000);
+const port = 5000;
+
+mongoConnect(() => {
+    app.listen(port, () => {
+        console.log(`Server started listening on port: ${port}`);
+    });
 })
